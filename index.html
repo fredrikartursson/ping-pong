@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Pingis Event</title>
+    <title>Pingis Turnering Anmälan</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -10,32 +10,32 @@
             margin: 20px;
             padding: 0;
         }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        .group-container {
-            margin-bottom: 30px;
-            padding: 15px;
-            border-radius: 8px;
-        }
-        .player-entry {
+        .registration-form {
             width: 80%;
             margin: 20px auto;
             padding: 20px;
             background-color: #f0f0f0;
             border-radius: 8px;
-            text-align: center;
+            text-align: left;
         }
-        .player-textarea {
+        .registration-form h2 {
+            text-align: center;
+            color: #333;
+        }
+        .registration-form label {
+            font-size: 16px;
+            margin-bottom: 5px;
+            display: block;
+        }
+        .registration-form input {
             width: 100%;
-            height: 200px;
             margin-bottom: 15px;
-            border-radius: 8px;
             padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
             font-size: 16px;
         }
-        .generate-button {
+        .submit-button {
             background-color: #007bff;
             color: #fff;
             border: none;
@@ -43,9 +43,9 @@
             padding: 10px 20px;
             cursor: pointer;
             font-size: 16px;
-            margin-bottom: 20px;
+            width: 100%;
         }
-        .generate-button:hover {
+        .submit-button:hover {
             background-color: #0056b3;
         }
         .logo {
@@ -55,78 +55,38 @@
             border-radius: 10px;
         }
     </style>
-    <script>
-        // GitHub Pages friendly version without Firebase
-        const groupColors = ["#FFDDC1", "#FFABAB", "#FFC3A0", "#FF677D", "#D4A5A5", "#97C1A9", "#FF6F61", "#6B4226", "#D9BF77", "#EFC050"];
-
-        function generateGroupsAndMatches() {
-            const playerText = document.getElementById("player-names").value.trim();
-            if (playerText === "") return alert("Vänligen ange minst en spelare.");
-
-            const players = playerText.split(/
-+/).map(name => name.trim()).filter(name => name !== "");
-            const container = document.getElementById("groups-container");
-            container.innerHTML = "";
-            const groupSize = Math.ceil(players.length / 5);
-            const tournamentName = `Turnering ${new Date().toLocaleDateString()}`;
-            let groups = [];
-
-            for (let i = 0; i < 5; i++) {
-                const groupPlayers = players.slice(i * groupSize, (i + 1) * groupSize).map(player => ({
-                    name: player,
-                    points: 0,
-                    won: 0,
-                    lost: 0
-                }));
-
-                const groupDiv = document.createElement("div");
-                const groupColor = groupColors[Math.floor(Math.random() * groupColors.length)];
-                groupDiv.className = "group-container";
-                groupDiv.style.backgroundColor = groupColor;
-                groupDiv.innerHTML = `<h2>Grupp ${i + 1}</h2>`;
-
-                const table = document.createElement("table");
-                table.className = "player-table";
-                table.innerHTML = `
-                    <thead>
-                        <tr>
-                            <th>Spelare</th>
-                            <th>Poäng</th>
-                            <th>Matcher Vunna</th>
-                            <th>Matcher Förlorade</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${groupPlayers.map((player, j) => `
-                            <tr id="group-${i}-player-${j}">
-                                <td>${player.name}</td>
-                                <td>${player.points}</td>
-                                <td>${player.won}</td>
-                                <td>${player.lost}</td>
-                            </tr>`).join("")}
-                    </tbody>
-                `;
-
-                groupDiv.appendChild(table);
-                container.appendChild(groupDiv);
-
-                groups.push({ players: groupPlayers, matches: [] });
-            }
-
-            console.log('Turnering skapad:', tournamentName, groups);
+<script>
+        function sendEmail(event) {
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+            const company = document.getElementById('company').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            
+            const mailtoLink = `mailto:fredrik.artursson@gmail.com?subject=Ny anmälan till Pingisturneringen&body=Namn: ${name}%0D%0AFöretag: ${company}%0D%0AEmail: ${email}%0D%0ATelefon: ${phone}`;
+            window.location.href = mailtoLink;
         }
     </script>
-    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <img src="pingpong-logo_FINAL.png" alt="Pingis Event Logo" class="logo" />
-    <div class="player-entry">
-        <h2>Lägg till alla spelare</h2>
-        <textarea id="player-names" class="player-textarea" placeholder="Ange en spelare per rad..."></textarea>
-        <button class="generate-button" onclick="generateGroupsAndMatches()">Generera Grupper och Spelordning</button>
+    <div class="registration-form">
+        <h2>Anmäl dig till Pingisturneringen</h2>
+        <form id="registration-form" onsubmit="sendEmail(event)">
+            <label for="name">Namn</label>
+            <input type="text" id="name" name="name" required>
+            
+            <label for="company">Företag</label>
+            <input type="text" id="company" name="company">
+            
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+            
+            <label for="phone">Telefon</label>
+            <input type="tel" id="phone" name="phone" required>
+            
+            <button type="submit" class="submit-button">Anmäl dig</button>
+        </form>
     </div>
-
-    <div id="groups-container"></div>
-    <div id="playoff-container" class="playoff-container"></div>
 </body>
 </html>
